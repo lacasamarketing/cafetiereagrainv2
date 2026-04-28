@@ -36,3 +36,9 @@ desktop.ini
 # Composer
 composer.phar
 /vendor/
+
+# Backup data WP + Rainforest (backup local, jamais push GitHub)
+_data/
+
+# Mockups locaux
+_mockup-*.html
