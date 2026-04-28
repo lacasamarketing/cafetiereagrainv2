@@ -1,222 +1,148 @@
 /**
- * Cafetière à grains 3D - Three.js vanilla.
- * Conversion du composant React Three Fiber en JS pur.
- * Cible : <canvas id="trap-canvas">.
- *
- * Lazy : on charge Three depuis CDN, on init au DOMContentLoaded.
+ * Coffee Cup 3D - Three.js
+ * Tasse a cafe ceramique avec crema doree, vapeur animee et grains en orbite.
+ * Container : <div id="cup-3d-container"></div>
  */
-
 (function () {
-  'use strict';
+    'use strict';
+    if (typeof THREE === 'undefined') return;
 
-  if (window.__trapInited) return;
-  window.__trapInited = true;
+    const container = document.getElementById('cup-3d-container');
+    if (!container) return;
 
-  const CANVAS_ID = 'trap-canvas';
-  const THREE_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r158/three.min.js';
-
-  function loadThree() {
-    return new Promise((resolve, reject) => {
-      if (window.THREE) return resolve(window.THREE);
-      const s = document.createElement('script');
-      s.src = THREE_CDN;
-      s.onload = () => resolve(window.THREE);
-      s.onerror = reject;
-      document.head.appendChild(s);
-    });
-  }
-
-  function init(THREE) {
-    const canvas = document.getElementById(CANVAS_ID);
-    if (!canvas) return;
-
-    const wrap = canvas.parentElement;
-    const W = () => wrap.clientWidth;
-    const H = () => wrap.clientHeight;
+    const w = container.clientWidth || 600;
+    const h = container.clientHeight || 600;
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x050810, 4, 14);
+    const camera = new THREE.PerspectiveCamera(35, w / h, 0.1, 100);
+    camera.position.set(0, 1.5, 7);
+    camera.lookAt(0, 0.5, 0);
 
-    const camera = new THREE.PerspectiveCamera(40, W() / H(), 0.1, 100);
-    camera.position.set(0, 0.6, 5.5);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(w, h);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
 
-    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.setSize(W(), H(), false);
+    scene.add(new THREE.AmbientLight(0xfff4e0, 0.8));
+    const key = new THREE.PointLight(0xffffff, 1.8, 18); key.position.set(3, 5, 4); scene.add(key);
+    const rim = new THREE.PointLight(0xffd4a0, 1.0, 12); rim.position.set(-3, 2, -1); scene.add(rim);
+    const fill = new THREE.DirectionalLight(0xfff0d8, 0.4); fill.position.set(-2, 3, 4); scene.add(fill);
 
-    // Lights
-    scene.add(new THREE.AmbientLight(0x1a2238, 0.45));
-    const d1 = new THREE.DirectionalLight(0xff6b9d, 0.6); d1.position.set(-3, 2, -2); scene.add(d1);
-    const d2 = new THREE.DirectionalLight(0xffffff, 0.25); d2.position.set(2, 3, 4); scene.add(d2);
+    const mug = new THREE.Group();
+    const ceramicMat = new THREE.MeshStandardMaterial({ color: 0xf5ede0, roughness: 0.35, metalness: 0.05, side: THREE.DoubleSide });
 
-    // ---- Trap group ----
-    const trap = new THREE.Group();
-    scene.add(trap);
+    const cupGeo = new THREE.CylinderGeometry(1.05, 0.85, 1.6, 64, 1, true);
+    mug.add(new THREE.Mesh(cupGeo, ceramicMat));
 
-    // Base
-    const base = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.78, 0.92, 0.34, 48),
-      new THREE.MeshStandardMaterial({ color: 0x0c1120, roughness: 0.55, metalness: 0.4 })
-    );
-    base.position.y = -1.05;
-    trap.add(base);
+    const bottom = new THREE.Mesh(new THREE.CircleGeometry(0.85, 64), ceramicMat);
+    bottom.rotation.x = -Math.PI / 2; bottom.position.y = -0.8;
+    mug.add(bottom);
 
-    // Ring at the base (UV emissive)
-    const baseRing = new THREE.Mesh(
-      new THREE.TorusGeometry(0.82, 0.012, 16, 64),
-      new THREE.MeshStandardMaterial({ color: 0x5cabff, emissive: 0x2a6bb8, emissiveIntensity: 0.6 })
-    );
-    baseRing.position.y = -0.88;
-    baseRing.rotation.x = Math.PI / 2;
-    trap.add(baseRing);
+    const innerCup = new THREE.Mesh(cupGeo.clone(), new THREE.MeshStandardMaterial({ color: 0x3a2418, roughness: 0.7, side: THREE.BackSide }));
+    innerCup.scale.set(0.97, 0.97, 0.97);
+    mug.add(innerCup);
 
-    // Vertical ribs around the cage
-    const ribCount = 14;
-    const ribMat = new THREE.MeshStandardMaterial({ color: 0x1a2238, metalness: 0.8, roughness: 0.3 });
-    for (let i = 0; i < ribCount; i++) {
-      const a = (i / ribCount) * Math.PI * 2;
-      const m = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 1.7, 8), ribMat);
-      m.position.set(Math.cos(a) * 0.55, 0, Math.sin(a) * 0.55);
-      trap.add(m);
+    const coffee = new THREE.Mesh(new THREE.CircleGeometry(1.0, 64), new THREE.MeshStandardMaterial({ color: 0x2a1810, roughness: 0.3, metalness: 0.3 }));
+    coffee.rotation.x = -Math.PI / 2; coffee.position.y = 0.7;
+    mug.add(coffee);
+
+    const crema = new THREE.Mesh(new THREE.RingGeometry(0.65, 1.0, 64), new THREE.MeshStandardMaterial({ color: 0xc89863, roughness: 0.4, transparent: true, opacity: 0.9, emissive: 0x8b5a35, emissiveIntensity: 0.2 }));
+    crema.rotation.x = -Math.PI / 2; crema.position.y = 0.71;
+    mug.add(crema);
+
+    const cremaInner = new THREE.Mesh(new THREE.CircleGeometry(0.65, 64), new THREE.MeshStandardMaterial({ color: 0x6b4a2a, roughness: 0.5, transparent: true, opacity: 0.7 }));
+    cremaInner.rotation.x = -Math.PI / 2; cremaInner.position.y = 0.715;
+    mug.add(cremaInner);
+
+    const handle = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.12, 16, 32, Math.PI), ceramicMat);
+    handle.position.set(1.05, 0, 0); handle.rotation.z = Math.PI / 2;
+    mug.add(handle);
+
+    const saucer = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.5, 0.1, 64), ceramicMat);
+    saucer.position.y = -0.9;
+    mug.add(saucer);
+
+    const goldRim = new THREE.Mesh(new THREE.TorusGeometry(1.05, 0.025, 12, 64), new THREE.MeshStandardMaterial({ color: 0xc89863, roughness: 0.2, metalness: 0.8 }));
+    goldRim.rotation.x = Math.PI / 2; goldRim.position.y = 0.8;
+    mug.add(goldRim);
+
+    const steamParticles = [];
+    for (let i = 0; i < 18; i++) {
+        const p = new THREE.Mesh(
+            new THREE.SphereGeometry(0.18 + Math.random() * 0.12, 12, 12),
+            new THREE.MeshBasicMaterial({ color: 0x8b7560, transparent: true, opacity: 0 })
+        );
+        p.position.set((Math.random() - 0.5) * 0.6, 0.8 + Math.random() * 0.5, (Math.random() - 0.5) * 0.6);
+        p.userData = { wobble: Math.random() * Math.PI * 2, startY: p.position.y, baseX: p.position.x, baseZ: p.position.z, delay: Math.random() * 80 };
+        mug.add(p);
+        steamParticles.push(p);
     }
 
-    // Mid rings (3) - thin glowing UV
-    const midMat = new THREE.MeshBasicMaterial({ color: 0x5cabff, transparent: true, opacity: 0.55 });
-    [-0.55, 0, 0.55].forEach((y) => {
-      const r = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.008, 12, 48), midMat);
-      r.position.y = y;
-      r.rotation.x = Math.PI / 2;
-      trap.add(r);
-    });
+    mug.position.y = -0.2;
+    scene.add(mug);
 
-    // Center UV tube (pulsing)
-    const tube = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.075, 0.075, 1.55, 24),
-      new THREE.MeshBasicMaterial({ color: 0x9ed1ff })
-    );
-    trap.add(tube);
-
-    // Halo
-    const halo = new THREE.Mesh(
-      new THREE.SphereGeometry(0.22, 24, 24),
-      new THREE.MeshBasicMaterial({
-        color: 0x5cabff, transparent: true, opacity: 0.18,
-        blending: THREE.AdditiveBlending, depthWrite: false
-      })
-    );
-    trap.add(halo);
-
-    // Top dome
-    const top = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.62, 0.55, 0.22, 48),
-      new THREE.MeshStandardMaterial({ color: 0x10172a, roughness: 0.45, metalness: 0.5 })
-    );
-    top.position.y = 0.95;
-    trap.add(top);
-
-    // Tiny LED dot (warm pink)
-    const led = new THREE.Mesh(
-      new THREE.SphereGeometry(0.045, 20, 20),
-      new THREE.MeshBasicMaterial({ color: 0xff6b9d })
-    );
-    led.position.set(0.25, 1.07, 0);
-    trap.add(led);
-
-    // UV point light
-    const pl = new THREE.PointLight(0x5cabff, 4, 9, 1.6);
-    pl.position.set(0, 0.4, 0);
-    trap.add(pl);
-
-    // Scale-in animation
-    trap.scale.set(0, 0, 0);
-
-    // ---- Mosquitoes (point cloud orbiting and falling into the trap) ----
-    const COUNT = 80;
-    const data = [];
-    for (let i = 0; i < COUNT; i++) {
-      data.push({
-        angle: Math.random() * Math.PI * 2,
-        radius: 1.6 + Math.random() * 2.2,
-        height: -0.6 + Math.random() * 1.4,
-        speed: 0.4 + Math.random() * 0.8,
-        wobble: Math.random() * 10,
-      });
+    const beans = [];
+    const beanMat = new THREE.MeshStandardMaterial({ color: 0x6b4a2a, roughness: 0.6, metalness: 0.1 });
+    for (let i = 0; i < 6; i++) {
+        const beanGeo = new THREE.SphereGeometry(0.15, 16, 12);
+        beanGeo.scale(1, 1.4, 0.6);
+        const bean = new THREE.Mesh(beanGeo, beanMat);
+        const angle = (i / 6) * Math.PI * 2;
+        bean.position.set(Math.cos(angle) * 2.5, -0.5 + Math.random() * 1.5, Math.sin(angle) * 2.5);
+        bean.userData = { angle, speed: 0.005 + Math.random() * 0.005, baseY: bean.position.y, bobOffset: Math.random() * Math.PI * 2 };
+        scene.add(bean);
+        beans.push(bean);
     }
-    const positions = new Float32Array(COUNT * 3);
-    const geom = new THREE.BufferGeometry();
-    geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const mat = new THREE.PointsMaterial({
-      color: 0xf4f1eb, size: 0.028, transparent: true, opacity: 0.85,
-      blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true
+
+    const mouse = { x: 0, y: 0 };
+    container.addEventListener('mousemove', (e) => {
+        const r = container.getBoundingClientRect();
+        mouse.x = ((e.clientX - r.left) / r.width - 0.5) * 2;
+        mouse.y = ((e.clientY - r.top) / r.height - 0.5) * 2;
     });
-    const points = new THREE.Points(geom, mat);
-    scene.add(points);
 
-    // ---- Loop ----
-    const clock = new THREE.Clock();
-    let appearProg = 0;
-
+    let frame = 0;
     function animate() {
-      const t = clock.getElapsedTime();
-      const dt = clock.getDelta();
+        requestAnimationFrame(animate);
+        frame++;
+        const targetRotY = (frame * 0.003) + mouse.x * 0.5;
+        const targetRotX = mouse.y * 0.15;
+        mug.rotation.y += (targetRotY - mug.rotation.y) * 0.05;
+        mug.rotation.x += (targetRotX - mug.rotation.x) * 0.05;
+        mug.position.y = -0.2 + Math.sin(frame * 0.02) * 0.06;
 
-      // Apparition douce (1.2s ease-out)
-      if (appearProg < 1) {
-        appearProg = Math.min(1, appearProg + dt / 1.2);
-        const ease = 1 - Math.pow(1 - appearProg, 3);
-        trap.scale.setScalar(ease);
-      }
+        steamParticles.forEach((p) => {
+            if (frame < p.userData.delay) return;
+            const lifeFrame = (frame - p.userData.delay) % 200;
+            const t = lifeFrame / 200;
+            p.position.y = p.userData.startY + t * 2.2;
+            p.position.x = p.userData.baseX + Math.sin(frame * 0.03 + p.userData.wobble) * 0.15;
+            p.position.z = p.userData.baseZ + Math.cos(frame * 0.025 + p.userData.wobble) * 0.15;
+            const scale = 0.6 + t * 1.8;
+            p.scale.set(scale, scale, scale);
+            let opacity;
+            if (t < 0.15) opacity = (t / 0.15) * 0.35;
+            else if (t > 0.6) opacity = ((1 - t) / 0.4) * 0.35;
+            else opacity = 0.35;
+            p.material.opacity = opacity;
+        });
 
-      // Rotation lente
-      trap.rotation.y += 0.0042;
-      trap.rotation.x = Math.sin(t * 0.4) * 0.05;
+        beans.forEach((b) => {
+            b.userData.angle += b.userData.speed;
+            b.position.x = Math.cos(b.userData.angle) * 2.5;
+            b.position.z = Math.sin(b.userData.angle) * 2.5;
+            b.position.y = b.userData.baseY + Math.sin(frame * 0.03 + b.userData.bobOffset) * 0.15;
+            b.rotation.x += 0.02; b.rotation.z += 0.015;
+        });
 
-      // UV tube pulse
-      const p = 1 + Math.sin(t * 4) * 0.18;
-      tube.scale.set(p, 1, p);
-
-      // Light intensity pulse
-      pl.intensity = 3.2 + Math.sin(t * 4) * 0.9;
-
-      // Halo scale pulse
-      const s = 0.9 + Math.sin(t * 4) * 0.12;
-      halo.scale.setScalar(s);
-
-      // Mosquitoes
-      const arr = points.geometry.attributes.position.array;
-      for (let i = 0; i < COUNT; i++) {
-        const d = data[i];
-        d.angle += d.speed * 0.012;
-        d.radius -= 0.0035 * d.speed;
-        if (d.radius < 0.18) {
-          d.radius = 1.8 + Math.random() * 2.2;
-          d.height = -0.6 + Math.random() * 1.4;
-        }
-        arr[i * 3]     = Math.cos(d.angle) * d.radius;
-        arr[i * 3 + 1] = d.height + Math.sin(t * 3 + d.wobble) * 0.06;
-        arr[i * 3 + 2] = Math.sin(d.angle) * d.radius;
-      }
-      points.geometry.attributes.position.needsUpdate = true;
-
-      renderer.render(scene, camera);
-      requestAnimationFrame(animate);
+        renderer.render(scene, camera);
     }
     animate();
 
-    // Resize
-    function onResize() {
-      camera.aspect = W() / H();
-      camera.updateProjectionMatrix();
-      renderer.setSize(W(), H(), false);
-    }
-    window.addEventListener('resize', onResize, { passive: true });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      loadThree().then(init).catch((e) => console.warn('Three.js failed to load', e));
+    window.addEventListener('resize', () => {
+        const nw = container.clientWidth, nh = container.clientHeight;
+        camera.aspect = nw / nh;
+        camera.updateProjectionMatrix();
+        renderer.setSize(nw, nh);
     });
-  } else {
-    loadThree().then(init).catch((e) => console.warn('Three.js failed to load', e));
-  }
 })();

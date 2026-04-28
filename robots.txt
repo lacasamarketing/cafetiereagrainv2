@@ -3,11 +3,15 @@ Allow: /
 Disallow: /app/
 Disallow: /config/
 Disallow: /database/
-Disallow: /uploads/
+Disallow: /scripts/
+Disallow: /partials/
+Disallow: /vendor/
 Disallow: /admin/
 Disallow: /api/
-Disallow: /info.php
-Disallow: /install.php
 Disallow: /go/
+Disallow: /_data/
 
-# Pas d'am
+# Pas d'amazon dans la dispatch
+Disallow: /go/amazon
+
+Sitemap: https://cafetiereagrain.fr/sitemap.xml

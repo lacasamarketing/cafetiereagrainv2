@@ -5,10 +5,16 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Annule les jobs precedents si nouveau push (evite les conflits FTP)
+concurrency:
+  group: deploy-ovh
+  cancel-in-progress: true
+
 jobs:
   deploy:
     name: Deploy via FTP to OVH
     runs-on: ubuntu-latest
+    timeout-minutes: 25
 
     steps:
       - name: Checkout code
@@ -61,16 +67,16 @@ jobs:
           ];
           PHPEOF
 
-          # Substitue les placeholders (pipe-delimiter pour eviter / ou & dans les valeurs)
+          # Substitue les placeholders (pipe-delimiter pour eviter conflicts avec valeurs)
           sed -i "s|__DB_HOST__|${{ secrets.DB_HOST }}|g" config/config.php
           sed -i "s|__DB_NAME__|${{ secrets.DB_NAME }}|g" config/config.php
           sed -i "s|__DB_USER__|${{ secrets.DB_USER }}|g" config/config.php
           sed -i "s|__DB_PASS__|${{ secrets.DB_PASS }}|g" config/config.php
 
-          # APP_KEY : si pas de secret, fallback hash stable depuis le repo_id
+          # APP_KEY : fallback hash stable depuis repo_id
           APP_KEY="${{ secrets.APP_KEY }}"
           if [ -z "$APP_KEY" ]; then
-            APP_KEY=$(echo -n "piegm-appkey-${{ github.repository_id }}-v1" | sha256sum | cut -d' ' -f1)
+            APP_KEY=$(echo -n "cgrain-appkey-${{ github.repository_id }}-v1" | sha256sum | cut -d' ' -f1)
           fi
           sed -i "s|__APP_KEY__|${APP_KEY}|g" config/config.php
 
@@ -80,4 +86,66 @@ jobs:
 
           ANTHROPIC_KEY="${{ secrets.ANTHROPIC_API_KEY }}"
           [ -z "$ANTHROPIC_KEY" ] && ANTHROPIC_KEY="sk-ant-CHANGEME"
-       
+          sed -i "s|__ANTHROPIC_API_KEY__|${ANTHROPIC_KEY}|g" config/config.php
+
+          RAINFOREST_KEY="${{ secrets.RAINFOREST_API_KEY }}"
+          [ -z "$RAINFOREST_KEY" ] && RAINFOREST_KEY="CHANGE_ME"
+          sed -i "s|__RAINFOREST_API_KEY__|${RAINFOREST_KEY}|g" config/config.php
+
+          AMAZON_TAG="${{ secrets.AMAZON_TAG }}"
+          [ -z "$AMAZON_TAG" ] && AMAZON_TAG="lacasamarke08-21"
+          sed -i "s|__AMAZON_TAG__|${AMAZON_TAG}|g" config/config.php
+
+          GA4_ID="${{ secrets.GA4_ID }}"
+          sed -i "s|__GA4_ID__|${GA4_ID}|g" config/config.php
+
+          PLAUSIBLE="${{ secrets.PLAUSIBLE_DOMAIN }}"
+          sed -i "s|__PLAUSIBLE_DOMAIN__|${PLAUSIBLE}|g" config/config.php
+
+          echo "config/config.php genere OK ($(wc -l < config/config.php) lignes)"
+
+      - name: Verify PHP syntax
+        run: |
+          # Test syntax sur tous les fichiers PHP avant deploiement
+          find . -type f -name "*.php" \
+            -not -path './_data/*' \
+            -not -path './.git/*' \
+            -not -path './node_modules/*' \
+            -not -path './vendor/*' \
+            -print0 | xargs -0 -n1 -P4 php -l > /tmp/phplint.log 2>&1 || true
+          if grep -q "Errors parsing" /tmp/phplint.log; then
+            echo "ERREUR de syntaxe PHP detectee :"
+            grep -B1 "Errors parsing" /tmp/phplint.log
+            exit 1
+          fi
+          echo "PHP syntax OK"
+
+      - name: Deploy via FTP to OVH
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_PATH }}
+          protocol: ftp
+          port: 21
+          local-dir: ./
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github
+            **/.github/**
+            _data/
+            _data/**
+            _mockup-*.html
+            _mockup-*
+            **/node_modules/**
+            **/.DS_Store
+            **/*.md
+            *.production
+            scripts/build_import_sql.py
+            database/*.sql
+            index-full.php.backup
+            .ftp-deploy-sync-state.json
+          log-level: minimal

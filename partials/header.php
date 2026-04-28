@@ -46,6 +46,9 @@ $plausibleDomain = $cfg['analytics']['plausible_domain'] ?? '';
 <link rel="alternate icon" href="/favicon.ico">
 
 <link rel="stylesheet" href="/assets/css/custom.css">
+<link rel="stylesheet" href="/assets/css/cafetiere-extras.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;900&display=swap" rel="stylesheet">
 
 <!-- JSON-LD : Organization + WebSite + SearchAction (toutes pages) -->
 <script type="application/ld+json"><?php echo json_encode([
