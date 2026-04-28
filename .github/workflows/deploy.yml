@@ -14,7 +14,7 @@ jobs:
   deploy:
     name: Deploy via FTP to OVH
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 8
 
     steps:
       - name: Checkout code
@@ -120,13 +120,25 @@ jobs:
           fi
           echo "PHP syntax OK"
 
+      - name: Preflight FTP connection test (fail fast)
+        run: |
+          echo "Test connexion FTP avant le gros upload..."
+          # Test simple : list du dossier racine. Echec = credentials/path KO.
+          curl -v --connect-timeout 10 --max-time 30 \
+            --user "${{ secrets.FTP_USER }}:${{ secrets.FTP_PASSWORD }}" \
+            "ftp://${{ secrets.FTP_HOST }}/" 2>&1 | head -50 || {
+            echo "ECHEC CONNEXION FTP - verifier FTP_HOST, FTP_USER, FTP_PASSWORD"
+            exit 1
+          }
+          echo "Connexion FTP OK"
+
       - name: Deploy via FTP to OVH
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ${{ secrets.FTP_PATH }}
+          server-dir: ./
           protocol: ftp
           port: 21
           local-dir: ./
