@@ -1,0 +1,83 @@
+name: Deploy to OVH mutualisé
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy via FTP to OVH
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate config.php from secrets
+        run: |
+          mkdir -p config
+          cat > config/config.php <<'PHPEOF'
+          <?php
+          return [
+              'env' => 'prod',
+              'base_url' => 'https://cafetiereagrain.fr',
+              'db' => [
+                  'host' => '__DB_HOST__',
+                  'name' => '__DB_NAME__',
+                  'user' => '__DB_USER__',
+                  'pass' => '__DB_PASS__',
+                  'charset' => 'utf8mb4',
+              ],
+              'security' => [
+                  'app_key' => '__APP_KEY__',
+                  'session_lifetime' => 7200,
+                  'max_login_attempts' => 5,
+              ],
+              'api_token' => '__API_TOKEN__',
+              'anthropic_api_key' => '__ANTHROPIC_API_KEY__',
+              'anthropic_model'   => 'claude-sonnet-4-6',
+              'rainforest_api_key' => '__RAINFOREST_API_KEY__',
+              'affiliate' => [
+                  'amazon_tag'  => '__AMAZON_TAG__',
+                  'amazon_base' => 'https://www.amazon.fr',
+                  'awin_id'        => '',
+                  'effiliation_id' => '',
+              ],
+              'admin_email' => 'bonjour@lacasamarketing.fr',
+              'smtp' => [
+                  'host' => '',
+                  'port' => 587,
+                  'user' => '',
+                  'pass' => '',
+                  'from_name'  => 'cafetiereagrain.fr',
+                  'from_email' => 'noreply@cafetiereagrain.fr',
+              ],
+              'analytics' => [
+                  'ga4_id' => '__GA4_ID__',
+                  'gtm_id' => '',
+                  'plausible_domain' => '__PLAUSIBLE_DOMAIN__',
+              ],
+          ];
+          PHPEOF
+
+          # Substitue les placeholders (pipe-delimiter pour eviter / ou & dans les valeurs)
+          sed -i "s|__DB_HOST__|${{ secrets.DB_HOST }}|g" config/config.php
+          sed -i "s|__DB_NAME__|${{ secrets.DB_NAME }}|g" config/config.php
+          sed -i "s|__DB_USER__|${{ secrets.DB_USER }}|g" config/config.php
+          sed -i "s|__DB_PASS__|${{ secrets.DB_PASS }}|g" config/config.php
+
+          # APP_KEY : si pas de secret, fallback hash stable depuis le repo_id
+          APP_KEY="${{ secrets.APP_KEY }}"
+          if [ -z "$APP_KEY" ]; then
+            APP_KEY=$(echo -n "piegm-appkey-${{ github.repository_id }}-v1" | sha256sum | cut -d' ' -f1)
+          fi
+          sed -i "s|__APP_KEY__|${APP_KEY}|g" config/config.php
+
+          API_TOKEN="${{ secrets.API_TOKEN }}"
+          [ -z "$API_TOKEN" ] && API_TOKEN="CHANGE_ME"
+          sed -i "s|__API_TOKEN__|${API_TOKEN}|g" config/config.php
+
+          ANTHROPIC_KEY="${{ secrets.ANTHROPIC_API_KEY }}"
+          [ -z "$ANTHROPIC_KEY" ] && ANTHROPIC_KEY="sk-ant-CHANGEME"
+       

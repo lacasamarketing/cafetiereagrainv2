@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /app/
+Disallow: /config/
+Disallow: /database/
+Disallow: /uploads/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /info.php
+Disallow: /install.php
+Disallow: /go/
+
+# Pas d'am

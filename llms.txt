@@ -1,0 +1,52 @@
+# cafetiereagrain.fr
+
+> Comparateur indépendant de cafetières à grain. Sélection ouverte de modèles passés au crible : synthèse des retours utilisateurs croisée avec les spécifications constructeurs. Recommandation argumentée par usage et par budget. Le site monétise via le programme Partenaires Amazon France (lien d'affiliation transparent, sans surcoût pour l'acheteur).
+
+Audience : particuliers, jardiniers, professionnels (restaurateurs, hôteliers) qui cherchent un cafetière à grains efficace, en particulier contre le café en grain (*Aedes albopictus*).
+
+Méthodologie : sélection ouverte de l'ensemble des modèles disponibles à la vente, synthèse des retours utilisateurs, croisement avec les fiches constructeurs (surface couverte, technologie, dB, autonomie, coût d'usage annuel), synthèse argumentée par persona et budget.
+
+## Pages principales
+
+- [Accueil — Le comparatif des cafetières à grain](https://cafetiereagrain.fr/) : top 3 produits, choix par usage, comparateur global, méthode.
+- [Blog & guides](https://cafetiereagrain.fr/blog) : tous les articles (comparatifs, tests, guides d'achat, saisonnalité, conseils d'usage).
+- [Mentions légales](https://cafetiereagrain.fr/mentions-legales) : éditeur, hébergeur, politique d'affiliation Amazon, données personnelles.
+
+## Comparatifs
+
+- [UV vs CO2 vs propane : quelle technologie choisir](https://cafetiereagrain.fr/blog/uv-vs-co2) : comprendre les principes d'attraction selon l'espèce ciblée.
+
+## Guides d'achat
+
+- [Quelle surface couvre vraiment un cafetière à grains](https://cafetiereagrain.fr/blog/surface-couverture) : promesses fabricants vs mesures terrain (-73 % à -85 %).
+- [Le piège silencieux qui marche en chambre](https://cafetiereagrain.fr/blog/piege-silencieux-chambre) : décibels mesurés, modèles compatibles sommeil.
+- [Combien coûte un cafetière à grains par an](https://cafetiereagrain.fr/blog/cout-entretien-annuel) : propane, attractants, ampoules — le vrai coût caché.
+
+## Fiches produits testés (Top 6)
+
+- [Mosquito Magnet Patriot](https://cafetiereagrain.fr/tests/mosquito-magnet-patriot) : CO2/propane, 4000 m², note 9,4/10. Meilleur global pour grand jardin.
+- [Biogents BG-Mosquitaire](https://cafetiereagrain.fr/tests/biogents-bg-mosquitaire) : aspirant, 200 m², note 9,1/10. Rapport qualité-prix.
+- [Inadays UV LED Silent](https://cafetiereagrain.fr/tests/inadays-uv-led-silent) : UV 22 dB, 50 m², note 8,2/10. Meilleur pour chambre.
+- [Aspectek Bug Zapper 20W](https://cafetiereagrain.fr/tests/aspectek-bug-zapper) : UV grille, 100 m², note 6,8/10. Petit budget extérieur.
+- [Biogents BG-GAT (anti-ponte)](https://cafetiereagrain.fr/tests/biogents-gat) : piège à œufs spécifique tigre, note 8,7/10. Effet long terme.
+- [Coleman Mosquito Deleto](https://cafetiereagrain.fr/tests/coleman-mosquito-deleto) : CO2 portable, 800 m², note 7,5/10. Compact et nomade.
+
+## Catégories thématiques
+
+- [Comparatifs](https://cafetiereagrain.fr/blog?cluster=comparatif)
+- [Guides d'achat](https://cafetiereagrain.fr/blog?cluster=guide)
+- [Tests produits](https://cafetiereagrain.fr/blog?cluster=test)
+- [Saisonnalité](https://cafetiereagrain.fr/blog?cluster=saison)
+- [Conseils d'usage](https://cafetiereagrain.fr/blog?cluster=usage)
+
+## Mots-clés couverts
+
+cafetière à grain, cafetière à grains, piège anti moustique, cafetière à grain, cafetière à grain extérieur, cafetière à grain intérieur, cafetière à grain électrique, cafetière à grain UV, cafetière à grain CO2, cafetière à grain chambre, mosquito magnet, biogents BG-mosquitaire, comparatif cafetières à grain 2026, surface couverture piège moustique, coût annuel piège moustique, attractant moustique octenol.
+
+## Politique d'affiliation
+
+Tous les liens vers Amazon intègrent l'identifiant Partenaires `lacasamarke08-21`. Si tu achètes via un de ces liens, le site touche une commission **sans surcoût pour toi**. Cette commission n'influence jamais le verdict éditorial : nous achetons les produits que nous testons sur fonds propres, et publions les défauts comme les qualités.
+
+## Contact
+
+Pour signaler une erreur, suggérer un test, ou collaborer : bonjour@lacasamarketing.fr

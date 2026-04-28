@@ -1,0 +1,38 @@
+# Skills Claude (copies temporaires avant deplacement)
+_claude-skills/
+
+# Config sensible
+config/config.php
+.env
+.env.local
+.env.*.local
+
+# Dépendances (à générer selon choix — on laisse vendor côté OVH via deploy)
+# node_modules/
+# vendor/
+
+# Uploads utilisateurs
+uploads/*
+!uploads/.gitkeep
+
+# Logs
+*.log
+logs/
+
+# Build / cache
+.cache/
+tmp/
+*.tmp
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.sublime-*
+*.swp
+
+# Composer
+composer.phar
+/vendor/
