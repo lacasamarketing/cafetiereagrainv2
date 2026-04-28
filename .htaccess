@@ -1,74 +1,39 @@
-# .htaccess cafetiereagrain.fr - URLs racine /{slug}/ pour preserver SEO existant
+# .htaccess cafetiereagrain.fr
+# MODE MIGRATION : toute URL non-asset envoyee vers index.php (page attente)
+# Quand le site complet est pret, basculer sur le .htaccess "production"
 
-# =====================================================
-# CRITIQUE OVH : desactiver MultiViews
-# =====================================================
 <IfModule mod_negotiation.c>
     Options -MultiViews
 </IfModule>
 
-# =====================================================
-# Security headers
-# =====================================================
 <IfModule mod_headers.c>
     Header set X-Content-Type-Options "nosniff"
     Header set X-Frame-Options "SAMEORIGIN"
     Header set Referrer-Policy "strict-origin-when-cross-origin"
-    Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
     Header set X-XSS-Protection "1; mode=block"
 </IfModule>
 
 # Bloquer fichiers sensibles
-<FilesMatch "^\.env|^\.htaccess|^\.gitignore|^\.gitattributes|composer\.(json|lock)|package\.(json|lock)|\.md$|^\.ovhconfig$|^\.ftp-deploy-sync-state\.json$">
+<FilesMatch "^\.env|^\.htaccess|^\.gitignore|^\.gitattributes|composer\.(json|lock)|\.md$|^\.ovhconfig$|^index-full\.php\.backup$">
     Require all denied
 </FilesMatch>
 
-# Bloquer acces direct aux dossiers sensibles
-RedirectMatch 404 ^/(app|config|database|vendor|partials|scripts|\.git|\.github)(/|$)
+# Bloquer dossiers sensibles
+RedirectMatch 404 ^/(app|config|database|vendor|partials|scripts|_data|\.git|\.github)(/|$)
 
-# =====================================================
-# Routing - URLs racine /{slug}/ (preserves SEO du WP existant)
-# =====================================================
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
 
-    # FIX OVH : propager le header Authorization vers PHP
-    RewriteCond %{HTTP:Authorization} ^(.*)
-    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    # Si fichier statique reel existe (CSS, JS, images, fonts), servir direct
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^.*$ - [L]
 
-    # Sitemaps dynamiques (index + sub-sitemaps)
-    RewriteRule ^sitemap\.xml$           sitemap.php           [L,QSA]
-    RewriteRule ^sitemap-pages\.xml$     sitemap-pages.php     [L,QSA]
-    RewriteRule ^sitemap-articles\.xml$  sitemap-articles.php  [L,QSA]
+    # robots.txt + favicon : servir direct
+    RewriteRule ^(robots\.txt|favicon\.ico)$ - [L]
 
-    # Blog index (page liste articles)
-    RewriteRule ^blog/?$ blog.php [L,QSA]
-
-    # Cover SVG : /covers/{slug}.svg -> cover.php?slug={slug}
-    RewriteRule ^covers/([a-z0-9-]+)\.svg$ cover.php?slug=$1 [L,QSA]
-
-    # Tracking affiliation : /go/{dest} -> go.php?dest={dest}
-    RewriteRule ^go/([a-z0-9-]+)/?$ go.php?dest=$1 [L,QSA]
-
-    # Quiz : /quiz ou /quiz/{usage}
-    RewriteRule ^quiz/?$ quiz.php [L,QSA]
-    RewriteRule ^quiz/([a-z0-9-]+)/?$ quiz.php?usage=$1 [L,QSA]
-
-    # Mentions legales : /mentions-legales
-    RewriteRule ^mentions-legales/?$ mentions-legales.php [L,QSA]
-
-    # Admin : /admin -> admin/index.php
-    RewriteRule ^admin/?$ admin/index.php [L,QSA]
-
-    # Si fichier ou dossier reel existe, servir direct
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-
-    # CRITIQUE SEO : URLs articles a la racine /{slug}/ -> article.php
-    # (preserves toutes les URLs Google indexees du WP actuel)
-    RewriteRule ^([a-z0-9][a-z0-9-]*)/?$ article.php?slug=$1 [L,QSA]
+    # Tout le reste -> index.php (page attente)
+    RewriteRule ^.*$ index.php [L,QSA]
 </IfModule>
 
-# Index par defaut
-DirectoryIndex index.php index.html
+DirectoryIndex index.php

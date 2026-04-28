@@ -1,0 +1,69 @@
+# .htaccess cafetiereagrain.fr - PRODUCTION
+# A copier vers .htaccess quand le site complet (DB peuplee, frontend code) est pret.
+
+<IfModule mod_negotiation.c>
+    Options -MultiViews
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+<FilesMatch "^\.env|^\.htaccess|^\.gitignore|^\.gitattributes|composer\.(json|lock)|\.md$|^\.ovhconfig$|^index-full\.php\.backup$">
+    Require all denied
+</FilesMatch>
+
+RedirectMatch 404 ^/(app|config|database|vendor|partials|scripts|_data|\.git|\.github)(/|$)
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # FIX OVH : propager Authorization header
+    RewriteCond %{HTTP:Authorization} ^(.*)
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Sitemaps
+    RewriteRule ^sitemap\.xml$           sitemap.php           [L,QSA]
+    RewriteRule ^sitemap-pages\.xml$     sitemap-pages.php     [L,QSA]
+    RewriteRule ^sitemap-articles\.xml$  sitemap-articles.php  [L,QSA]
+    RewriteRule ^sitemap-products\.xml$  sitemap-products.php  [L,QSA]
+
+    # Blog (liste articles + cluster)
+    RewriteRule ^blog/?$ blog.php [L,QSA]
+
+    # Categorie : /categorie/{slug} -> blog.php?cluster={slug}
+    RewriteRule ^categorie/([a-z0-9-]+)/?$ blog.php?cluster=$1 [L,QSA]
+
+    # Page produit individuelle : /cafetiere/{slug-or-asin} -> product.php
+    RewriteRule ^cafetiere/([A-Z0-9a-z-]+)/?$ product.php?id=$1 [L,QSA]
+
+    # Cover SVG : /covers/{slug}.svg -> cover.php
+    RewriteRule ^covers/([a-z0-9-]+)\.svg$ cover.php?slug=$1 [L,QSA]
+
+    # Tracking : /go/{dest} -> go.php
+    RewriteRule ^go/([a-z0-9-]+)/?$ go.php?dest=$1 [L,QSA]
+
+    # Quiz
+    RewriteRule ^quiz/?$ quiz.php [L,QSA]
+    RewriteRule ^quiz/([a-z0-9-]+)/?$ quiz.php?usage=$1 [L,QSA]
+
+    # Mentions legales
+    RewriteRule ^mentions-legales/?$ mentions-legales.php [L,QSA]
+
+    # Admin
+    RewriteRule ^admin/?$ admin/index.php [L,QSA]
+
+    # Si fichier reel : servir direct
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Articles a la racine /{slug}/ (preserve SEO du WP existant)
+    RewriteRule ^([a-z0-9][a-z0-9-]*)/?$ article.php?slug=$1 [L,QSA]
+</IfModule>
+
+DirectoryIndex index.php
