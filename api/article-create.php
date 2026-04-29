@@ -150,4 +150,5 @@ try {
     if (!empty($data['queue_id'])) {
         Queue::markFailed((int)$data['queue_id'], $e->getMessage());
     }
-    respond(500, ['error' =
+        respond(500, ['error' => 'Internal error: ' . $e->getMessage()]);
+    }
