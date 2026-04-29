@@ -128,9 +128,9 @@ require __DIR__ . '/partials/header.php';
         </div>
         <div class="container hero__inner">
             <div class="hero__content">
-                <div class="hero__eyebrow">PRIX TEMPS RÉEL · <?= $count_products ?:'50' ?>+ MACHINES TESTÉES</div>
+                <div class="hero__eyebrow">COMPARATEUR INDÉPENDANT · <?= $count_products ?:'50' ?>+ MACHINES TESTÉES</div>
                 <h1 class="hero__title display">Trouve <span class="hero__accent">la cafetière à grain</span> qui te ressemble.</h1>
-                <p class="hero__lead">Avis honnêtes, comparatifs sans concession, prix Amazon mis à jour chaque heure. On a testé les meilleures machines pour t'éviter les mauvaises surprises à 800 €.</p>
+                <p class="hero__lead">Avis honnêtes, comparatifs sans concession, retours utilisateurs croisés avec les fiches constructeurs. On a analysé les meilleures machines pour t'éviter les mauvaises surprises à 800 €.</p>
                 <div class="hero__ctas">
                     <a href="#top-cafetieres" class="btn btn--primary btn--xl">Voir le top 2026 →</a>
                     <a href="#methode" class="btn btn--ghost">Comment on teste ↓</a>
@@ -156,7 +156,7 @@ require __DIR__ . '/partials/header.php';
                 <span class="marquee__item">Crema dorée</span>
                 <span class="marquee__item marquee__item--accent">Arabica · Robusta</span>
                 <span class="marquee__item">Tests sur 21 jours</span>
-                <span class="marquee__item marquee__item--accent">Prix Amazon temps réel</span>
+                <span class="marquee__item marquee__item--accent">Sans publicité déguisée</span>
             <?php endfor; ?>
         </div>
     </div>
@@ -165,8 +165,8 @@ require __DIR__ . '/partials/header.php';
     <div class="features-bar">
         <div class="container features-bar__row">
             <div class="feat"><span class="feat__icon">★</span>Notes vérifiées Amazon</div>
-            <div class="feat"><span class="feat__icon">€</span>Prix mis à jour chaque heure</div>
-            <div class="feat"><span class="feat__icon">✓</span>Tests sur 21 jours minimum</div>
+            <div class="feat"><span class="feat__icon">€</span>Prix Amazon comparés</div>
+            <div class="feat"><span class="feat__icon">✓</span>Analyse sur 21 jours minimum</div>
             <div class="feat"><span class="feat__icon">↻</span>Remboursable 30 jours Amazon</div>
         </div>
     </div>
@@ -276,12 +276,17 @@ require __DIR__ . '/partials/header.php';
             <div class="articles-grid">
                 <?php foreach ($articles_recents as $art): ?>
                     <a class="article-card" href="/<?= Layout::escape($art['slug']) ?>">
-                        <span class="article-card__cluster"><?= Layout::escape($art['cluster']) ?></span>
-                        <h3 class="article-card__title"><?= Layout::escape($art['title']) ?></h3>
-                        <?php if (!empty($art['description'])): ?>
-                            <p class="article-card__excerpt"><?= Layout::escape(mb_substr($art['description'], 0, 140)) ?>…</p>
-                        <?php endif; ?>
-                        <span class="article-card__meta"><?= (int)$art['reading_time'] ?> min de lecture →</span>
+                        <div class="article-card__cover">
+                            <img src="/blog/<?= Layout::escape($art['slug']) ?>.svg" alt="<?= Layout::escape($art['title']) ?>" loading="lazy">
+                        </div>
+                        <div class="article-card__body">
+                            <span class="article-card__cluster"><?= Layout::escape($art['cluster']) ?></span>
+                            <h3 class="article-card__title"><?= Layout::escape($art['title']) ?></h3>
+                            <?php if (!empty($art['description'])): ?>
+                                <p class="article-card__excerpt"><?= Layout::escape(mb_substr($art['description'], 0, 120)) ?>…</p>
+                            <?php endif; ?>
+                            <span class="article-card__meta"><?= (int)$art['reading_time'] ?> min de lecture →</span>
+                        </div>
                     </a>
                 <?php endforeach; ?>
             </div>
@@ -350,8 +355,8 @@ require __DIR__ . '/partials/header.php';
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="/assets/js/coffee-cup-3d.js" defer></script>
-<script src="/assets/js/coffee-beans-floating.js" defer></script>
-<script src="/assets/js/marquee.js" defer></script>
+<script src="/assets/js/coffee-cup-3d.js?v=<?= date('Ymd') ?>" defer></script>
+<script src="/assets/js/coffee-beans-floating.js?v=<?= date('Ymd') ?>" defer></script>
+<script src="/assets/js/marquee.js?v=<?= date('Ymd') ?>" defer></script>
 
 <?php require __DIR__ . '/partials/footer.php'; ?>

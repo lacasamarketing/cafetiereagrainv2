@@ -1,240 +1,362 @@
 <?php
-// Index temporaire cafetiereagrain.fr - page de transition durant migration
-// Aucune dependance DB / classes Core - 100% autonome
+// Homepage complete cafetiereagrain.fr - hero 3D + TOPs intelligents + maillage interne
+// Active quand DB peuplee. Tant que pas pret : .htaccess maintenance route vers index.php (attente).
+
 declare(strict_types=1);
 
-http_response_code(200);
-header('Content-Type: text/html; charset=utf-8');
-header('Cache-Control: public, max-age=300'); // 5 min cache CDN
-?><!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
-<meta name="theme-color" content="#faf6ef">
-<title>Cafetière à grain — Le comparatif obsessionnel arrive bientôt</title>
-<meta name="description" content="cafetiereagrain.fr fait peau neuve. Le comparatif indépendant des cafetières à grain revient très vite, plus complet, avec prix Amazon temps réel.">
-<meta name="robots" content="noindex">
-<link rel="canonical" href="https://cafetiereagrain.fr/">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;700;900&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg: #faf6ef;
-  --bg-2: #f3ece0;
-  --espresso: #2a1810;
-  --espresso-soft: #4a2c14;
-  --caramel: #a8784e;
-  --caramel-deep: #8b5a35;
-  --crema: #d4a574;
-  --gold: #c89863;
-  --text-mute: #6f5640;
-  --accent: #d97706;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { background: var(--bg); color: var(--espresso); font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; }
-body { display: flex; flex-direction: column; }
-main {
-  flex: 1; display: flex; align-items: center; justify-content: center;
-  padding: 2rem; position: relative; min-height: 100vh;
-}
-.bg-decor {
-  position: absolute; inset: 0; overflow: hidden; z-index: 0; pointer-events: none;
-}
-.bg-decor::before {
-  content: ''; position: absolute; top: -10%; right: -10%; width: 60%; height: 60%;
-  background: radial-gradient(circle, rgba(212, 165, 116, 0.18) 0%, transparent 60%);
-  border-radius: 50%;
-}
-.bg-decor::after {
-  content: ''; position: absolute; bottom: -20%; left: -10%; width: 50%; height: 50%;
-  background: radial-gradient(circle, rgba(168, 120, 78, 0.12) 0%, transparent 60%);
-  border-radius: 50%;
-}
-.bean {
-  position: absolute; width: 18px; height: 26px;
-  background: var(--caramel-deep); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  opacity: 0.3; will-change: transform;
-}
-.bean::after {
-  content: ''; position: absolute; inset: 8% 50% 8% 50%;
-  border-right: 1.5px solid var(--bg);
-  border-radius: 0 50% 50% 0 / 0 50% 50% 0;
-}
-.b1 { top: 12%; left: 8%; animation: float1 14s ease-in-out infinite; }
-.b2 { top: 25%; right: 12%; animation: float2 18s ease-in-out infinite; opacity: .25; }
-.b3 { bottom: 18%; left: 15%; animation: float3 16s ease-in-out infinite; opacity: .28; }
-.b4 { bottom: 30%; right: 8%; animation: float4 20s ease-in-out infinite; opacity: .22; }
-.b5 { top: 60%; left: 50%; animation: float5 22s ease-in-out infinite; opacity: .15; width: 14px; height: 20px; }
-.b6 { top: 70%; right: 30%; animation: float6 17s ease-in-out infinite; opacity: .26; }
-@keyframes float1 { 0%,100% { transform: translate(0,0) rotate(20deg); } 50% { transform: translate(40px,-50px) rotate(80deg); } }
-@keyframes float2 { 0%,100% { transform: translate(0,0) rotate(-15deg); } 50% { transform: translate(-30px,40px) rotate(15deg); } }
-@keyframes float3 { 0%,100% { transform: translate(0,0) rotate(45deg); } 50% { transform: translate(-40px,-60px) rotate(-30deg); } }
-@keyframes float4 { 0%,100% { transform: translate(0,0) rotate(-30deg); } 50% { transform: translate(-50px,30px) rotate(70deg); } }
-@keyframes float5 { 0%,100% { transform: translate(0,0) rotate(60deg); } 50% { transform: translate(40px,30px) rotate(-30deg); } }
-@keyframes float6 { 0%,100% { transform: translate(0,0) rotate(75deg); } 50% { transform: translate(-30px,-40px) rotate(-25deg); } }
-.container {
-  position: relative; z-index: 1; max-width: 720px; text-align: center;
-}
-.eyebrow {
-  display: inline-flex; align-items: center; gap: .6rem;
-  padding: .5rem 1rem; background: #fff; border: 1px solid rgba(74,44,20,0.12);
-  border-radius: 999px; font-size: .8rem; color: var(--caramel-deep);
-  margin-bottom: 2rem; font-weight: 500; letter-spacing: .03em;
-}
-.eyebrow::before {
-  content: ''; width: 6px; height: 6px; background: var(--accent);
-  border-radius: 50%; animation: pulse 2s ease-in-out infinite;
-}
-@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
-h1 {
-  font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 5vw, 3.6rem);
-  line-height: 1.1; font-weight: 900; margin-bottom: 1.5rem;
-  letter-spacing: -0.02em;
-}
-h1 .accent {
-  color: var(--caramel-deep); font-style: italic; font-weight: 700;
-  position: relative; display: inline-block;
-}
-h1 .accent::after {
-  content: ''; position: absolute; left: 0; right: 0; bottom: 0.05em; height: 0.35em;
-  background: rgba(212, 165, 116, 0.35); z-index: -1; border-radius: 2px;
-}
-.tagline {
-  font-size: 1.15rem; color: var(--text-mute); line-height: 1.7;
-  max-width: 540px; margin: 0 auto 2.5rem;
-}
-.cup {
-  width: 120px; height: 120px; margin: 0 auto 2rem;
-  position: relative;
-  animation: cupFloat 3s ease-in-out infinite;
-}
-@keyframes cupFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-.cup svg { width: 100%; height: 100%; }
-.steam {
-  position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
-  width: 60px; height: 50px;
-}
-.steam-line {
-  position: absolute; bottom: 0; width: 4px; height: 30px;
-  background: linear-gradient(to top, rgba(168, 120, 78, 0.4), transparent);
-  border-radius: 4px;
-  animation: steam 3s ease-in-out infinite;
-}
-.steam-line:nth-child(1) { left: 20%; animation-delay: 0s; }
-.steam-line:nth-child(2) { left: 50%; animation-delay: 0.5s; height: 36px; }
-.steam-line:nth-child(3) { left: 78%; animation-delay: 1s; height: 28px; }
-@keyframes steam {
-  0% { opacity: 0; transform: translateY(0) scaleY(0.8); }
-  50% { opacity: 0.6; transform: translateY(-14px) scaleY(1.1); }
-  100% { opacity: 0; transform: translateY(-30px) scaleY(1.3); }
-}
-.progress {
-  margin: 2rem auto; max-width: 320px;
-  height: 8px; background: var(--bg-2); border-radius: 999px; overflow: hidden;
-}
-.progress-bar {
-  height: 100%; background: linear-gradient(90deg, var(--caramel), var(--gold), var(--accent));
-  border-radius: 999px;
-  animation: progressMove 2.4s ease-in-out infinite;
-  width: 35%;
-}
-@keyframes progressMove {
-  0% { margin-left: -35%; }
-  100% { margin-left: 100%; }
-}
-.steps {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem; margin: 3rem auto 2rem; max-width: 600px;
-  text-align: left;
-}
-.step {
-  padding: 1rem; background: #fff; border: 1px solid rgba(74,44,20,0.08);
-  border-radius: 12px; display: flex; gap: .8rem; align-items: flex-start;
-}
-.step-icon {
-  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
-  background: var(--bg-2); color: var(--caramel-deep);
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: .85rem;
-}
-.step strong { display: block; font-weight: 600; color: var(--espresso); margin-bottom: .15rem; font-size: .9rem; }
-.step span { color: var(--text-mute); font-size: .8rem; line-height: 1.5; }
-.step.done .step-icon { background: var(--caramel-deep); color: #fff; }
-.step.done .step-icon::before { content: '✓'; }
-.step.active .step-icon { background: var(--accent); color: #fff; animation: pulse 1.5s infinite; }
-footer {
-  padding: 2rem; text-align: center; color: var(--text-mute); font-size: .85rem;
-  border-top: 1px solid rgba(74,44,20,0.08); background: #fff;
-}
-footer a { color: var(--caramel-deep); text-decoration: none; font-weight: 500; }
-footer a:hover { text-decoration: underline; }
-</style>
-</head>
-<body>
-<main>
-  <div class="bg-decor">
-    <div class="bean b1"></div>
-    <div class="bean b2"></div>
-    <div class="bean b3"></div>
-    <div class="bean b4"></div>
-    <div class="bean b5"></div>
-    <div class="bean b6"></div>
-  </div>
-  <div class="container">
-    <div class="eyebrow">MIGRATION EN COURS &middot; SEO PRÉSERVÉ</div>
+require __DIR__ . '/app/bootstrap.php';
 
-    <div class="cup">
-      <div class="steam">
-        <div class="steam-line"></div>
-        <div class="steam-line"></div>
-        <div class="steam-line"></div>
-      </div>
-      <svg viewBox="0 0 120 120" fill="none">
-        <ellipse cx="60" cy="100" rx="40" ry="6" fill="#a8784e" opacity="0.15"/>
-        <path d="M28 50 L92 50 L86 90 Q86 100 76 100 L44 100 Q34 100 34 90 Z" fill="#f5ede0" stroke="#8b5a35" stroke-width="2"/>
-        <ellipse cx="60" cy="50" rx="32" ry="6" fill="#2a1810"/>
-        <ellipse cx="60" cy="49" rx="26" ry="4" fill="#c89863" opacity="0.85"/>
-        <path d="M92 60 Q108 60 108 75 Q108 90 92 88" stroke="#8b5a35" stroke-width="3" fill="none"/>
-      </svg>
+use App\Core\Database;
+use App\Core\Layout;
+
+$cfg = Layout::loadConfig();
+
+$top_pertinence = [];
+$top_ventes = [];
+$top_par_type = [];
+$articles_recents = [];
+$articles_par_categorie = [];
+
+try {
+    $pdo = Database::pdo();
+
+    // TOP 3 PAR PERTINENCE (rating x log(reviews))
+    $top_pertinence = $pdo->query(
+        "SELECT asin, slug, name, brand, type_cafetiere, price_eur, rating, ratings_total,
+                main_image_url, score_pertinence, summary_avis, verdict
+         FROM products
+         WHERE status = 'published' AND rating IS NOT NULL AND rating >= 4
+         ORDER BY score_pertinence DESC LIMIT 3"
+    )->fetchAll();
+
+    // TOP 3 PAR VENTE (Amazon bestsellers rank)
+    $top_ventes = $pdo->query(
+        "SELECT asin, slug, name, brand, type_cafetiere, price_eur, rating, ratings_total,
+                main_image_url, bestsellers_rank, bestsellers_cat
+         FROM products
+         WHERE status = 'published' AND bestsellers_rank IS NOT NULL
+         ORDER BY score_vente DESC LIMIT 3"
+    )->fetchAll();
+
+    // TOP par typologie : 1 representant par type
+    $stmt = $pdo->query(
+        "SELECT p.* FROM products p
+         INNER JOIN (
+             SELECT type_cafetiere, MAX(score_pertinence) AS max_score
+             FROM products WHERE status = 'published' GROUP BY type_cafetiere
+         ) m ON p.type_cafetiere = m.type_cafetiere AND p.score_pertinence = m.max_score
+         WHERE p.status = 'published' ORDER BY p.score_pertinence DESC LIMIT 6"
+    );
+    $top_par_type = $stmt->fetchAll();
+
+    // 6 articles recents
+    $articles_recents = $pdo->query(
+        "SELECT slug, title, description, cluster, reading_time, publish_at
+         FROM articles WHERE status = 'published'
+         ORDER BY publish_at DESC LIMIT 6"
+    )->fetchAll();
+
+    // Articles groupes par categorie pour maillage
+    $stmt = $pdo->query(
+        "SELECT a.slug, a.title, a.cluster, a.reading_time
+         FROM articles a WHERE a.status = 'published'
+         ORDER BY a.cluster, a.publish_at DESC"
+    );
+    foreach ($stmt as $row) {
+        $articles_par_categorie[$row['cluster']][] = $row;
+    }
+} catch (Throwable $e) {
+    error_log('home.php DB error: ' . $e->getMessage());
+}
+
+// Compteurs
+$count_products = 0; $count_articles = 0;
+try {
+    $count_products = (int)$pdo->query("SELECT COUNT(*) FROM products WHERE status = 'published'")->fetchColumn();
+    $count_articles = (int)$pdo->query("SELECT COUNT(*) FROM articles WHERE status = 'published'")->fetchColumn();
+} catch (Throwable $e) {}
+
+// Helpers d'affichage
+function type_label(string $t): string {
+    return [
+        'espresso_broyeur_auto' => 'Espresso broyeur automatique',
+        'espresso_manuel'       => 'Expresso manuel',
+        'expresso_capsule'      => 'Capsule',
+        'hybride_grain_filtre'  => 'Hybride grain + filtre',
+        'moulin'                => 'Moulin a cafe',
+        'accessoire'            => 'Accessoire',
+        'autre'                 => 'Autre',
+    ][$t] ?? ucfirst($t);
+}
+function type_emoji(string $t): string {
+    return ['espresso_broyeur_auto' => '☕', 'espresso_manuel' => '🤚', 'moulin' => '⚙️', 'hybride_grain_filtre' => '🔄', 'accessoire' => '🔧'][$t] ?? '☕';
+}
+function stars_render(?float $r): string {
+    if ($r === null) return '';
+    $out = '';
+    for ($i = 1; $i <= 5; $i++) {
+        if ($i <= floor($r)) $out .= '<span class="star is-full">★</span>';
+        elseif ($i - 0.5 <= $r) $out .= '<span class="star is-half">★</span>';
+        else $out .= '<span class="star">★</span>';
+    }
+    return $out;
+}
+function amazon_url(array $product, array $cfg): string {
+    $tag = $cfg['affiliate']['amazon_tag'] ?? 'lacasamarke08-21';
+    return 'https://www.amazon.fr/dp/' . urlencode($product['asin']) . '?tag=' . urlencode($tag);
+}
+
+$pageTitle = 'Cafetière à grain — Le comparatif obsessionnel 2026';
+$pageDescription = 'Comparatif indépendant des meilleures cafetières à grain : DeLonghi, Philips, Jura, Krups. Prix Amazon temps réel, tests sur 21 jours minimum.';
+
+require __DIR__ . '/partials/header.php';
+?>
+
+<main class="home">
+
+    <!-- ============= HERO ============= -->
+    <section class="hero">
+        <div class="hero__decor">
+            <div class="bean b1"></div>
+            <div class="bean b2"></div>
+            <div class="bean b3"></div>
+            <div class="bean b4"></div>
+            <div class="bean b5"></div>
+            <div class="bean b6"></div>
+            <div class="bean b7"></div>
+            <div class="bean b8"></div>
+        </div>
+        <div class="container hero__inner">
+            <div class="hero__content">
+                <div class="hero__eyebrow">COMPARATEUR INDÉPENDANT · <?= $count_products ?:'50' ?>+ MACHINES TESTÉES</div>
+                <h1 class="hero__title display">Trouve <span class="hero__accent">la cafetière à grain</span> qui te ressemble.</h1>
+                <p class="hero__lead">Avis honnêtes, comparatifs sans concession, retours utilisateurs croisés avec les fiches constructeurs. On a analysé les meilleures machines pour t'éviter les mauvaises surprises à 800 €.</p>
+                <div class="hero__ctas">
+                    <a href="#top-cafetieres" class="btn btn--primary btn--xl">Voir le top 2026 →</a>
+                    <a href="#methode" class="btn btn--ghost">Comment on teste ↓</a>
+                </div>
+                <div class="hero__stats">
+                    <div class="stat"><span class="stat__num"><?= $count_products ?: '20+' ?></span><span class="stat__lbl">Machines testées</span></div>
+                    <div class="stat"><span class="stat__num"><?= $count_articles ?: '50+' ?></span><span class="stat__lbl">Articles publiés</span></div>
+                    <div class="stat"><span class="stat__num">21j</span><span class="stat__lbl">Test minimum</span></div>
+                </div>
+            </div>
+            <div class="hero__cup3d" id="cup-3d-container"></div>
+        </div>
+    </section>
+
+    <!-- ============= MARQUEE ============= -->
+    <div class="marquee" aria-hidden="true">
+        <div class="marquee__track">
+            <?php for ($i = 0; $i < 2; $i++): ?>
+                <span class="marquee__item">Cafetière à grain</span>
+                <span class="marquee__item marquee__item--accent">Espresso barista</span>
+                <span class="marquee__item">Café fraîchement moulu</span>
+                <span class="marquee__item marquee__item--accent">Broyeur céramique</span>
+                <span class="marquee__item">Crema dorée</span>
+                <span class="marquee__item marquee__item--accent">Arabica · Robusta</span>
+                <span class="marquee__item">Tests sur 21 jours</span>
+                <span class="marquee__item marquee__item--accent">Sans publicité déguisée</span>
+            <?php endfor; ?>
+        </div>
     </div>
 
-    <h1>Le <span class="accent">nouveau cafetiereagrain.fr</span><br>arrive très bientôt.</h1>
-    <p class="tagline">
-      On refait tout au propre : prix Amazon temps réel via Rainforest, photos officielles, comparatifs honnêtes,
-      tests sur 21 jours minimum. Le SEO et tes URLs préférées sont préservés.
-    </p>
-
-    <div class="progress">
-      <div class="progress-bar"></div>
+    <!-- ============= FEATURES BAR ============= -->
+    <div class="features-bar">
+        <div class="container features-bar__row">
+            <div class="feat"><span class="feat__icon">★</span>Notes vérifiées Amazon</div>
+            <div class="feat"><span class="feat__icon">€</span>Prix Amazon comparés</div>
+            <div class="feat"><span class="feat__icon">✓</span>Analyse sur 21 jours minimum</div>
+            <div class="feat"><span class="feat__icon">↻</span>Remboursable 30 jours Amazon</div>
+        </div>
     </div>
 
-    <div class="steps">
-      <div class="step done">
-        <div class="step-icon"></div>
-        <div><strong>Audit &amp; sauvegarde</strong><span>52 articles, 23 produits Amazon enrichis.</span></div>
-      </div>
-      <div class="step active">
-        <div class="step-icon">2</div>
-        <div><strong>Migration en cours</strong><span>Stack PHP + MySQL, design café premium.</span></div>
-      </div>
-      <div class="step">
-        <div class="step-icon">3</div>
-        <div><strong>Mise en ligne</strong><span>Bientôt, avec prix Amazon temps réel.</span></div>
-      </div>
-    </div>
+    <!-- ============= TOP PAR PERTINENCE ============= -->
+    <?php if (!empty($top_pertinence)): ?>
+    <section class="section" id="top-cafetieres">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-eyebrow">Top du moment</div>
+                <h2 class="section-title display">Les cafetières qui valent leur prix.</h2>
+                <p class="section-subtitle">Sélection 2026 par <strong>score de pertinence</strong> (note × volume d'avis vérifiés Amazon). Aucun produit n'est sponsorisé.</p>
+            </div>
+            <div class="products-grid">
+                <?php foreach ($top_pertinence as $i => $p): ?>
+                    <a class="product-card" href="/cafetiere/<?= Layout::escape($p['asin']) ?>" data-tilt>
+                        <div class="product-card__rank">#<?= $i + 1 ?></div>
+                        <?php if (!empty($p['main_image_url'])): ?>
+                            <div class="product-card__img">
+                                <img src="<?= Layout::escape($p['main_image_url']) ?>" alt="<?= Layout::escape($p['name']) ?>" loading="lazy">
+                            </div>
+                        <?php endif; ?>
+                        <div class="product-card__brand"><?= Layout::escape($p['brand']) ?></div>
+                        <h3 class="product-card__name"><?= Layout::escape(mb_substr($p['name'], 0, 80)) ?></h3>
+                        <div class="product-card__rating"><?= stars_render((float)$p['rating']) ?> <span><?= number_format((float)$p['rating'], 1) ?>/5 · <?= number_format((int)$p['ratings_total'], 0, ',', ' ') ?> avis</span></div>
+                        <?php if (!empty($p['price_eur'])): ?>
+                            <div class="product-card__price"><span class="price-now"><?= number_format((float)$p['price_eur'], 0, ',', ' ') ?> €</span></div>
+                        <?php endif; ?>
+                        <span class="product-card__cta">Voir le test complet →</span>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </section>
+    <?php endif; ?>
 
-    <p style="margin-top: 2rem; color: var(--text-mute); font-size: .9rem;">
-      Tes URLs d'articles préférés (<code style="background:var(--bg-2);padding:.15em .4em;border-radius:4px;font-size:.8em;">cafetiereagrain.fr/avis-...</code>) seront toutes préservées.
-    </p>
-  </div>
+    <!-- ============= PAR TYPOLOGIE ============= -->
+    <?php if (!empty($top_par_type)): ?>
+    <section class="section section--alt">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-eyebrow">Par typologie</div>
+                <h2 class="section-title display">Quelle machine pour quel usage ?</h2>
+                <p class="section-subtitle">Espresso broyeur automatique, expresso manuel, hybride : chaque type répond à un besoin précis.</p>
+            </div>
+            <div class="typologies">
+                <?php foreach ($top_par_type as $p): ?>
+                    <a class="typology-card" href="/cafetiere/<?= Layout::escape($p['asin']) ?>">
+                        <div class="typology-card__type"><?= type_emoji($p['type_cafetiere']) ?> <?= type_label($p['type_cafetiere']) ?></div>
+                        <?php if (!empty($p['main_image_url'])): ?>
+                            <div class="typology-card__img"><img src="<?= Layout::escape($p['main_image_url']) ?>" alt="" loading="lazy"></div>
+                        <?php endif; ?>
+                        <div class="typology-card__brand"><?= Layout::escape($p['brand']) ?></div>
+                        <h3 class="typology-card__name"><?= Layout::escape(mb_substr($p['name'], 0, 60)) ?></h3>
+                        <?php if (!empty($p['rating'])): ?>
+                            <div class="typology-card__rating">★ <?= number_format((float)$p['rating'], 1) ?>/5</div>
+                        <?php endif; ?>
+                        <?php if (!empty($p['price_eur'])): ?>
+                            <div class="typology-card__price"><?= number_format((float)$p['price_eur'], 0, ',', ' ') ?> €</div>
+                        <?php endif; ?>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </section>
+    <?php endif; ?>
+
+    <!-- ============= TOP PAR VENTE ============= -->
+    <?php if (!empty($top_ventes)): ?>
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-eyebrow">Plus achetées</div>
+                <h2 class="section-title display">Les cafetières qui cartonnent en ce moment.</h2>
+                <p class="section-subtitle">Classement Amazon France <em>Machines à café automatiques</em>. Mis à jour automatiquement.</p>
+            </div>
+            <div class="bestsellers">
+                <?php foreach ($top_ventes as $i => $p): ?>
+                    <a class="bestseller" href="/cafetiere/<?= Layout::escape($p['asin']) ?>">
+                        <div class="bestseller__num">#<?= $p['bestsellers_rank'] ?></div>
+                        <?php if (!empty($p['main_image_url'])): ?>
+                            <div class="bestseller__img"><img src="<?= Layout::escape($p['main_image_url']) ?>" alt="" loading="lazy"></div>
+                        <?php endif; ?>
+                        <div class="bestseller__info">
+                            <div class="bestseller__brand"><?= Layout::escape($p['brand']) ?></div>
+                            <h3 class="bestseller__name"><?= Layout::escape(mb_substr($p['name'], 0, 70)) ?></h3>
+                            <div class="bestseller__meta">
+                                <span>★ <?= number_format((float)$p['rating'], 1) ?>/5</span>
+                                <span class="bestseller__price"><?= number_format((float)$p['price_eur'], 0, ',', ' ') ?> €</span>
+                            </div>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </section>
+    <?php endif; ?>
+
+    <!-- ============= ARTICLES RECENTS ============= -->
+    <?php if (!empty($articles_recents)): ?>
+    <section class="section section--alt">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-eyebrow">Le blog</div>
+                <h2 class="section-title display">Nos derniers articles &amp; tests.</h2>
+            </div>
+            <div class="articles-grid">
+                <?php foreach ($articles_recents as $art): ?>
+                    <a class="article-card" href="/<?= Layout::escape($art['slug']) ?>">
+                        <div class="article-card__cover">
+                            <img src="/blog/<?= Layout::escape($art['slug']) ?>.svg" alt="<?= Layout::escape($art['title']) ?>" loading="lazy">
+                        </div>
+                        <div class="article-card__body">
+                            <span class="article-card__cluster"><?= Layout::escape($art['cluster']) ?></span>
+                            <h3 class="article-card__title"><?= Layout::escape($art['title']) ?></h3>
+                            <?php if (!empty($art['description'])): ?>
+                                <p class="article-card__excerpt"><?= Layout::escape(mb_substr($art['description'], 0, 120)) ?>…</p>
+                            <?php endif; ?>
+                            <span class="article-card__meta"><?= (int)$art['reading_time'] ?> min de lecture →</span>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="/blog" class="btn btn--ghost">Tous les articles →</a>
+            </div>
+        </div>
+    </section>
+    <?php endif; ?>
+
+    <!-- ============= MAILLAGE INTERNE PAR CATEGORIE ============= -->
+    <?php if (!empty($articles_par_categorie)): ?>
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-eyebrow">Toutes les rubriques</div>
+                <h2 class="section-title display">Explore par thème.</h2>
+            </div>
+            <div class="categories-grid">
+                <?php
+                $categoriesMeta = [
+                    'cafetiere-a-grain' => ['Cafetière à grain', 'Tests des meilleures machines DeLonghi, Philips, Jura, Krups, Saeco.'],
+                    'cafes-en-grain'    => ['Cafés en grain',    'Origines, variétés et torréfactions : Arabica, Robusta, ethiopien, colombien.'],
+                    'accessoires'       => ['Accessoires',       'Tasses, moulins, balances, accessoires barista.'],
+                    'conseils-budget'   => ['Conseils & budget', 'Coût annuel, comparatifs grain vs dosette, choix d\'entretien.'],
+                ];
+                foreach ($categoriesMeta as $slug => $meta):
+                    $arts = $articles_par_categorie[$slug] ?? [];
+                    if (empty($arts)) continue;
+                ?>
+                    <div class="category-block">
+                        <h3 class="category-block__title"><?= Layout::escape($meta[0]) ?></h3>
+                        <p class="category-block__desc"><?= Layout::escape($meta[1]) ?></p>
+                        <ul class="category-block__list">
+                            <?php foreach (array_slice($arts, 0, 5) as $art): ?>
+                                <li><a href="/<?= Layout::escape($art['slug']) ?>"><?= Layout::escape($art['title']) ?></a></li>
+                            <?php endforeach; ?>
+                        </ul>
+                        <a href="/categorie/<?= Layout::escape($slug) ?>" class="category-block__more">Voir toute la catégorie →</a>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </section>
+    <?php endif; ?>
+
+    <!-- ============= METHODE / EDITORIAL ============= -->
+    <section class="section section--alt" id="methode">
+        <div class="container">
+            <div class="comp-grid">
+                <div>
+                    <div class="section-eyebrow">Comment on teste</div>
+                    <h2 class="section-title display">Notre méthodologie sans tabou.</h2>
+                    <p style="margin-top: 1rem; color: var(--muted); line-height: 1.7;">Chaque machine passe entre nos mains pendant 21 jours minimum. On note 5 critères essentiels, on photographie les vrais expressos, on teste l'entretien quotidien dans des conditions réelles.</p>
+                </div>
+                <div class="comp-list">
+                    <div class="comp-item"><span class="comp-num">1</span><div><strong>Qualité d'extraction</strong><span>Crema, température, corps en bouche.</span></div></div>
+                    <div class="comp-item"><span class="comp-num">2</span><div><strong>Bruit du broyeur</strong><span>Mesure décibels en conditions réelles.</span></div></div>
+                    <div class="comp-item"><span class="comp-num">3</span><div><strong>Facilité d'entretien</strong><span>Détartrage, nettoyage groupe café.</span></div></div>
+                    <div class="comp-item"><span class="comp-num">4</span><div><strong>Rapport qualité/prix</strong><span>Coût total possession sur 5 ans.</span></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
 </main>
 
-<footer>
-  &copy; <?= date('Y') ?> Cafetiereagrain.fr &middot; Comparateur indépendant de cafetières à grain &middot;
-  <a href="mailto:bonjour@lacasamarketing.fr">Contact</a> &middot;
-  <a href="https://www.lacasamarketing.fr/" target="_blank" rel="noopener">La Casa Marketing</a>
-</footer>
-</body>
-</html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="/assets/js/coffee-cup-3d.js?v=<?= date('Ymd') ?>" defer></script>
+<script src="/assets/js/coffee-beans-floating.js?v=<?= date('Ymd') ?>" defer></script>
+<script src="/assets/js/marquee.js?v=<?= date('Ymd') ?>" defer></script>
+
+<?php require __DIR__ . '/partials/footer.php'; ?>

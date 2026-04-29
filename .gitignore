@@ -6,6 +6,7 @@ config/config.php
 .env
 .env.local
 .env.*.local
+.env.deploy
 
 # Dépendances (à générer selon choix — on laisse vendor côté OVH via deploy)
 # node_modules/

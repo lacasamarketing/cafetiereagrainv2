@@ -954,8 +954,8 @@ body {
    Point central + 2 anneaux concentriques + tirets cardinaux
    ============================================================ */
 @media (hover: hover) and (pointer: fine) {
-    body { cursor: none; }
-    a, button, input, textarea, select, .product-card, .guide-card, .blog-item, .usage-tile, .process-step { cursor: none; }
+    body { cursor: auto; }
+    a, button, input, textarea, select, .product-card, .guide-card, .blog-item, .usage-tile, .process-step { cursor: auto; }
     a:focus-visible, button:focus-visible { outline: 2px solid var(--forest); outline-offset: 3px; }
 }
 .cursor-dot, .cursor-scope {
@@ -1155,3 +1155,10 @@ body {
     75%  { opacity: 0.7; }
     100% { transform: translate(0,0) scale(0.5); opacity: 0; }
 }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+
+/* ====== FIX CURSOR (ajouté 29/04 - assure visibilité du curseur natif) ====== */
+html, body, * { cursor: auto; }
+a, button, [role="button"], label, summary, .product-card, .article-card, .blog-item, .typology-card, .usage-tile, .guide-card, .process-step, .top3 .card, .alt-card, .related-card, .similar-card, .related-list__item, .mini-product, .bestseller, .hamburger { cursor: pointer; }
+input[type="text"], input[type="email"], input[type="search"], input[type="password"], input[type="tel"], input[type="url"], textarea, .prose { cursor: text; }
+input[type="radio"], input[type="checkbox"] { cursor: pointer; }

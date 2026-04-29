@@ -47,9 +47,13 @@ try {
     // Articles (filtre cluster)
     if ($cluster_slug) {
         $stmt = $pdo->prepare(
-            "SELECT slug, title, description, cluster, reading_time, publish_at, featured_image
-             FROM articles WHERE status = 'published' AND cluster = :c
-             ORDER BY publish_at DESC LIMIT :lim OFFSET :off"
+            "SELECT a.slug, a.title, a.description, a.cluster, a.reading_time, a.publish_at, a.featured_image,
+                    (SELECT p.main_image_url FROM article_products ap
+                     JOIN products p ON p.id = ap.product_id
+                     WHERE ap.article_id = a.id AND p.main_image_url IS NOT NULL
+                     ORDER BY ap.position ASC LIMIT 1) AS product_image
+             FROM articles a WHERE a.status = 'published' AND a.cluster = :c
+             ORDER BY a.publish_at DESC LIMIT :lim OFFSET :off"
         );
         $stmt->bindValue(':c', $cluster_slug);
         $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
@@ -62,9 +66,13 @@ try {
         $total = (int)$stmt->fetchColumn();
     } else {
         $stmt = $pdo->prepare(
-            "SELECT slug, title, description, cluster, reading_time, publish_at, featured_image
-             FROM articles WHERE status = 'published'
-             ORDER BY publish_at DESC LIMIT :lim OFFSET :off"
+            "SELECT a.slug, a.title, a.description, a.cluster, a.reading_time, a.publish_at, a.featured_image,
+                    (SELECT p.main_image_url FROM article_products ap
+                     JOIN products p ON p.id = ap.product_id
+                     WHERE ap.article_id = a.id AND p.main_image_url IS NOT NULL
+                     ORDER BY ap.position ASC LIMIT 1) AS product_image
+             FROM articles a WHERE a.status = 'published'
+             ORDER BY a.publish_at DESC LIMIT :lim OFFSET :off"
         );
         $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
         $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
@@ -180,18 +188,17 @@ require __DIR__ . '/partials/header.php';
             <section class="articles-grid articles-grid--blog">
                 <?php foreach ($articles as $art): ?>
                     <a class="article-card" href="/<?= Layout::escape($art['slug']) ?>">
-                        <?php if (!empty($art['featured_image'])): ?>
-                            <div class="article-card__cover">
-                                <img src="<?= Layout::escape($art['featured_image']) ?>" alt="" loading="lazy">
-                            </div>
-                        <?php else: ?>
-                            <div class="article-card__cover article-card__cover--svg">
-                                <svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
-                                    <rect width="200" height="100" fill="var(--cream-2)"/>
-                                    <text x="100" y="55" text-anchor="middle" fill="var(--caramel-deep)" font-family="serif" font-size="14" font-style="italic"><?= Layout::escape(mb_substr($art['cluster'], 0, 22)) ?></text>
-                                </svg>
-                            </div>
-                        <?php endif; ?>
+                        <?php
+                            // Vignette : 1) featured_image  2) photo produit principal  3) SVG genere
+                            $thumbSrc = $art['featured_image']
+                                ?? null;
+                            if (!$thumbSrc && !empty($art['product_image'])) $thumbSrc = $art['product_image'];
+                            if (!$thumbSrc) $thumbSrc = '/blog/' . urlencode($art['slug']) . '.svg';
+                            $isProductImg = !empty($art['product_image']) && empty($art['featured_image']);
+                        ?>
+                        <div class="article-card__cover<?= $isProductImg ? ' article-card__cover--product' : '' ?>">
+                            <img src="<?= Layout::escape($thumbSrc) ?>" alt="<?= Layout::escape($art['title']) ?>" loading="lazy">
+                        </div>
                         <div class="article-card__body">
                             <span class="article-card__cluster"><?= Layout::escape($art['cluster']) ?></span>
                             <h3 class="article-card__title"><?= Layout::escape($art['title']) ?></h3>

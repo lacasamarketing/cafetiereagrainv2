@@ -62,18 +62,52 @@ final class Queue
     public static function add(array $data): int
     {
         $pdo = Database::pdo();
+        $kw = trim((string)$data['keyword_target']);
+        $kwNorm = self::normalizeKeyword($kw);
+
+        // INSERT IGNORE = anti-doublon de keyword_norm (UNIQUE en BDD)
         $stmt = $pdo->prepare(
-            'INSERT INTO article_queue (keyword_target, title_hint, cluster, persona, priority, status)
-             VALUES (:kw, :hint, :cluster, :persona, :priority, "pending")'
+            'INSERT IGNORE INTO article_queue
+                (keyword_target, keyword_norm, title_hint, cluster, persona, source, priority, status)
+             VALUES (:kw, :kw_norm, :hint, :cluster, :persona, :source, :priority, "pending")'
         );
         $stmt->execute([
-            ':kw'       => trim($data['keyword_target']),
+            ':kw'       => $kw,
+            ':kw_norm'  => $kwNorm,
             ':hint'     => $data['title_hint'] ?? null,
             ':cluster'  => $data['cluster'] ?? 'general',
             ':persona'  => $data['persona'] ?? 'tous',
+            ':source'   => $data['source'] ?? 'manual',
             ':priority' => (int)($data['priority'] ?? 5),
         ]);
         return (int)$pdo->lastInsertId();
+    }
+
+    /**
+     * Normalise un keyword pour anti-doublon (lowercase, sans accent, espaces simples).
+     */
+    public static function normalizeKeyword(string $s): string
+    {
+        $s = mb_strtolower(trim($s), 'UTF-8');
+        $s = strtr($s, [
+            'à'=>'a','â'=>'a','é'=>'e','è'=>'e','ê'=>'e','ë'=>'e',
+            'î'=>'i','ï'=>'i','ô'=>'o','ö'=>'o','ù'=>'u','û'=>'u',
+            'ü'=>'u','ç'=>'c','ñ'=>'n',
+        ]);
+        $s = preg_replace('/\s+/', ' ', $s) ?? $s;
+        return mb_substr($s, 0, 200);
+    }
+
+    /**
+     * Compte des items en queue par cluster (pour scoring priorité dynamique).
+     */
+    public static function countByCluster(string $cluster): int
+    {
+        $stmt = Database::pdo()->prepare(
+            "SELECT COUNT(*) FROM articles WHERE cluster = ? AND status = 'published'"
+        );
+        $stmt->execute([$cluster]);
+        return (int)$stmt->fetchColumn();
     }
 
     public static function delete(int $id): void

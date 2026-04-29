@@ -161,7 +161,7 @@ require __DIR__ . '/partials/header.php';
                         <?php endif; ?>
                         <?php if (!empty($main_p['price_eur'])): ?>
                             <div class="article-product-hero__price"><?= number_format((float)$main_p['price_eur'], 0, ',', ' ') ?> €</div>
-                            <div class="article-product-hero__price-meta">Prix Amazon mis à jour aujourd'hui</div>
+                            <div class="article-product-hero__price-meta">Voir le prix actuel sur Amazon</div>
                         <?php endif; ?>
                         <a href="<?= Layout::escape($amazonUrl) ?>" target="_blank" rel="noopener sponsored" class="btn btn--primary btn--xl">
                             Voir sur Amazon →

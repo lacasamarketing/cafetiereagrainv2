@@ -1,6 +1,5 @@
 <?php
 // Layout helpers : escape, lien affiliation Amazon, build de CTA UTM.
-// Le site monétise via Amazon Partenaires France principalement.
 
 declare(strict_types=1);
 
@@ -28,10 +27,41 @@ final class Layout
 
     /**
      * Construit un lien d'affiliation Amazon avec tag + UTM.
-     * Usage : Layout::amazonLink('B0CXXXXX', 'comparatif-uv-vs-co2')
-     *         Layout::amazonLink('https://www.amazon.fr/dp/B0CXXXXX', 'mon-article')
+     * Accepte un ASIN ou une URL Amazon complete.
      */
     public static function amazonLink(string $asinOrUrl, string $campaign = ''): string
     {
         $cfg = self::loadConfig();
-        $tag = $cfg['affiliate']['amazon_tag'] ?? 
+        $tag = $cfg['affiliate']['amazon_tag'] ?? '';
+        $base = $cfg['affiliate']['amazon_base'] ?? 'https://www.amazon.fr';
+
+        // ASIN (10 caracteres alphanum) -> construit l'URL produit
+        if (preg_match('/^[A-Z0-9]{10}$/', $asinOrUrl)) {
+            $url = $base . '/dp/' . $asinOrUrl;
+        } else {
+            $url = $asinOrUrl;
+        }
+
+        // Ajoute le tag affiliate
+        $sep = (strpos($url, '?') !== false) ? '&' : '?';
+        if ($tag !== '' && strpos($url, 'tag=') === false) {
+            $url .= $sep . 'tag=' . urlencode($tag);
+            $sep = '&';
+        }
+        // UTM tracking interne
+        if ($campaign !== '') {
+            $url .= $sep . 'utm_source=cafetiereagrain'
+                  . '&utm_medium=affiliate'
+                  . '&utm_campaign=' . urlencode($campaign);
+        }
+        return $url;
+    }
+
+    /**
+     * Construit une URL de tracking interne (/go/{slug}) qui redirige vers Amazon.
+     */
+    public static function trackingLink(string $destSlug): string
+    {
+        return '/go/' . urlencode($destSlug);
+    }
+}

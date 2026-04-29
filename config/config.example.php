@@ -1,6 +1,6 @@
 <?php
 // Configuration template. Copier en config.php (gitignore) pour la prod.
-// La version de prod est generee automatiquement a partir des GitHub Secrets.
+// La version de prod est generee automatiquement par scripts/deploy.py.
 
 return [
     'env' => 'prod',
@@ -32,6 +32,32 @@ return [
     // Cle API Rainforest (sync produits Amazon, mutualisable entre sites)
     'rainforest_api_key' => 'CHANGEME_RAINFOREST',
 
+    // Mangools KWFinder (decouverte mots-cles SEO)
+    // Plan partage avec d'autres projets : on serre le budget mensuel pour cafetiereagrain.
+    'mangools' => [
+        'api_key' => 'CHANGEME_MANGOOLS',
+        'enabled' => true,
+        'monthly_budget' => 10,         // max 10 requests/mois pour ce projet
+        'fallback_seeds_only' => true,  // si quota atteint : skip enrichissement related
+    ],
+
     // Liens d'affiliation par defaut (Amazon Partenaires France)
     'affiliate' => [
-        'amaz
+        'amazon_tag' => 'lacasamarke08-21',
+        'amazon_base' => 'https://www.amazon.fr',
+    ],
+
+    'admin_email' => 'bonjour@lacasamarketing.fr',
+
+    // Analytics
+    'analytics' => [
+        'ga4_id' => '',
+        'plausible_domain' => '',
+    ],
+
+    // Sync Amazon (Option C : top 3 quotidien + full hebdo)
+    'sync' => [
+        'top_daily_count' => 3,         // nombre de produits "top" sync chaque jour
+        'full_weekly_day' => 0,         // 0=dimanche pour full sync hebdo
+    ],
+];
